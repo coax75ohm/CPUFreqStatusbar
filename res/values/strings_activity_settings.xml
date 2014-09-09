@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="title_activity_settings">CpuFreq in Statusbar</string>
+    <string name="title_activity_settings">CPUFreq in Statusbar</string>
     <string name="pref_default_update_interval" translatable="false">1000</string>
     <string name="pref_default_position" translatable="false">0</string>
     <string name="pref_default_measurement" translatable="false">M</string>
@@ -13,8 +13,8 @@
     <string name="pref_title_color_low">Color: Low</string>
     <string name="pref_title_color_middle">Color: Middle</string>
     <string name="pref_title_color_high">Color: High</string>
-    <string name="pref_title_freq_middle">Frequency: Middle</string>
-    <string name="pref_title_freq_high">Frequency: High</string>
+    <string name="pref_title_freq_middle">Frequency: Middle (MHz)</string>
+    <string name="pref_title_freq_high">Frequency: High (MHz)</string>
     <string name="pref_title_show_unit">Show Unit</string>
 
     <string-array name="pref_position_list_titles">

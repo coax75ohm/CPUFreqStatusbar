@@ -82,6 +82,10 @@ public class SettingsActivity extends PreferenceActivity {
 		String[] files = Utils.getFrequencyFiles();
 		frequency_file.setEntries(files);
 		frequency_file.setEntryValues(files);
+		if (frequency_file.getValue() == null) {
+			frequency_file.setValue("AUTO");
+		}
+		
 		bindPreferenceSummaryToValue(findPreference("frequency_file"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
 		bindPreferenceSummaryToValue(findPreference("color_mode"));
