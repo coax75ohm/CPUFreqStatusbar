@@ -26,11 +26,17 @@ import android.widget.TextView;
 @SuppressLint("HandlerLeak")
 public class CpuFreq extends TextView implements OnSharedPreferenceChangeListener {
 	final public static String INTENT_ACTION_UPDATE = "cpufreq_update_timer";
-	final private Context mContext;
 	final public static String PREF_KEY = "cpufreq_preferences";
+	final private Context mContext;
 	private PendingIntent pi = null;
 	private File freqFile = null;
+
 	public PositionCallback mPositionCallback = null;
+
+	private boolean isScreenOn = true;
+	private boolean isStatusBarVis = true;
+
+	private String sWidestFreq;
 
 	public CpuFreq(Context context) {
 		this(context, null);
@@ -53,12 +59,18 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		}
 
 		// style
+		sWidestFreq = Utils.findWidestFreqString();
 		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		setTextColor(context.getResources().getColor(
-				android.R.color.holo_blue_light));
+				android.R.color.white));
+
+		// REMOVE - for testing only
+		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+		//setMinimumWidth(100);
+
 		setSingleLine(true);
-		setPadding(6, 0, 0, 0);
-		setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		setPadding(3, 0, 3, 0);
+		setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
 	}
 	
 	private void initFreqFile() {
@@ -69,14 +81,27 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
+
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(INTENT_ACTION_UPDATE);
 		filter.addAction(SettingsActivity.ACTION_SETTINGS_UPDATE);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_SCREEN_ON);
 		mContext.registerReceiver(mBroadcastReceiver, filter);
+
 		mContext.getSharedPreferences(PREF_KEY, 0).registerOnSharedPreferenceChangeListener(this);
 
+		setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
+			@Override
+			public void onSystemUiVisibilityChange(int visibility) {
+				if((visibility & SYSTEM_UI_FLAG_FULLSCREEN) > 0) {
+					isStatusBarVis = false;
+				} else {
+					isStatusBarVis = true;
+				}
+			}
+		});
+		
 		// start update interval
 		int updateInterval = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("update_interval", "1000"));
 		setAlarm(updateInterval);
@@ -91,8 +116,6 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 	}
 
 	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-		private boolean isScreenOn = true;
-		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
@@ -101,7 +124,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			else if(intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 				isScreenOn = false;
 			}
-			else if(intent.getAction().equals(INTENT_ACTION_UPDATE) && isScreenOn) {
+			else if(intent.getAction().equals(INTENT_ACTION_UPDATE) && isScreenOn && isStatusBarVis) {
 				updateFrequency();
 			}
 			else if(intent.getAction().equals(SettingsActivity.ACTION_SETTINGS_UPDATE)) {
@@ -134,7 +157,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 
 			// read frequency
 			byte[] buffer = new byte[1024];
-			while (fis.read(buffer) != -1) {
+			while(fis.read(buffer) != -1) {
 				sbFreq.append(new String(buffer));
 			}
 			fis.close();
@@ -234,6 +257,10 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		else if(key.equals("frequency_file")) {
 			String frequency_file = pref.getString("frequency_file", null);
 			freqFile = Utils.getFreqFile(mContext, frequency_file);
+		}
+
+		else if(key.equals("pref_default_measurement") || key.equals("show_unit")) {
+			// TODO: calculate and set fixed width
 		}
 
 		updateFrequency();

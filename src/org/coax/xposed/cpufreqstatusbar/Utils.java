@@ -2,13 +2,16 @@ package org.coax.xposed.cpufreqstatusbar;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import android.content.Context;
+import android.graphics.Paint;
 import de.robv.android.xposed.XposedBridge;
 
 public class Utils {
@@ -97,5 +100,61 @@ public class Utils {
 		}
 		
 		return ret;
+	}
+	
+	public static String findWidestFreqString() {
+		File file = null;
+		Scanner mScanner;
+		String freq;
+		String widestFreq = null;
+		Paint mPaint = new Paint();
+
+		float maxwidth = 0;
+		float width;
+		
+		// size doesn't really matter here, it's the relative width that counts
+		mPaint.setTextSize(16);
+
+		// TODO: find out status bar font
+		
+		file = new File("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies");
+		if(file.exists() && file.canRead()) {
+			// parse scaling_available_frequencies and find widest string 
+			try {
+				mScanner = new Scanner(file);
+				while(mScanner.hasNext()) {
+					freq = mScanner.next();
+					width = mPaint.measureText(freq);
+					if(width > maxwidth) {
+						widestFreq = freq;
+						maxwidth = width;
+					}
+				}
+				mScanner.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		} else {
+			file = new File("/sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state");
+			if(file.exists() && file.canRead()) {
+				// parse time_in_state and find widest string 
+				try {
+					mScanner = new Scanner(file).useDelimiter("\\s+\\d+\n");
+					while(mScanner.hasNext()) {
+						freq = mScanner.next();
+						width = mPaint.measureText(freq);
+						if(width > maxwidth) {
+							widestFreq = freq;
+							maxwidth = width;
+						}
+					}
+					mScanner.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return widestFreq;
 	}
 }
