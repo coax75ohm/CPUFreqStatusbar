@@ -37,6 +37,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 	private boolean isStatusBarVis = true;
 
 	private String sWidestFreq;
+	private final static int paddingWidth = 3;
 
 	public CpuFreq(Context context) {
 		this(context, null);
@@ -62,11 +63,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		setTextColor(context.getResources().getColor(android.R.color.white));
 		setSingleLine(true);
-		setPadding(3, 0, 3, 0);
+		setPadding(paddingWidth, 0, paddingWidth, 0);
 		setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
-
-		// REMOVE - for testing only
-		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -82,11 +80,9 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			if(mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", false)) {
 				sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 			}
-			float scaledDensity = mContext.getResources().getDisplayMetrics().scaledDensity;
-			setMinimumWidth((int)(getPaint().measureText(sFormattedWidestFreq)/scaledDensity));
-			Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
-					getPaint().measureText(sFormattedWidestFreq) + " " +
-					scaledDensity);
+			setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
+			//Utils.log("init setMinimumWidth: " + sFormattedWidestFreq + " " +
+			//			getPaint().measureText(sFormattedWidestFreq));
 		}
 	}
 	
@@ -289,11 +285,9 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				if(pref.getBoolean("show_unit", false)) {
 					sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 				}
-				float scaledDensity = mContext.getResources().getDisplayMetrics().scaledDensity;
-				setMinimumWidth((int)(getPaint().measureText(sFormattedWidestFreq)/scaledDensity));
-				Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
-							getPaint().measureText(sFormattedWidestFreq) + " " +
-							scaledDensity);
+				setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + 6);  // add 6 for padding
+				//Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
+				//			getPaint().measureText(sFormattedWidestFreq));
 			}
 		}
 
