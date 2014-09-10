@@ -26,7 +26,7 @@ import android.widget.TextView;
 @SuppressLint("HandlerLeak")
 public class CpuFreq extends TextView implements OnSharedPreferenceChangeListener {
 	final public static String INTENT_ACTION_UPDATE = "cpufreq_update_timer";
-	final public static String PREF_KEY = "cpufreq_preferences";
+	final public static String PREF_KEY = "org.coax.xposed.cpufreqstatusbar_preferences";
 	final private Context mContext;
 	private PendingIntent pi = null;
 	private File freqFile = null;
@@ -53,18 +53,22 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		
 		// init
 		initFreqFile();
-		try {
-			Utils.log("freqFile=" + freqFile == null ? "null" : freqFile.getPath());
+		/* try {
+			Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
 		} catch (Exception e) {
 			Utils.log(Log.getStackTraceString(e));
-		}
+		} */
 
 		// style
-		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		setTextColor(context.getResources().getColor(android.R.color.white));
+		setTextSize(TypedValue.COMPLEX_UNIT_SP,
+				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
+		setTextColor(Color.WHITE);
 		setSingleLine(true);
 		setPadding(paddingWidth, 0, paddingWidth, 0);
 		setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+
+		// REMOVE - for testing only
+		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -81,8 +85,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 			}
 			setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
-			//Utils.log("init setMinimumWidth: " + sFormattedWidestFreq + " " +
-			//			getPaint().measureText(sFormattedWidestFreq));
+			//Utils.log("init setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq) +
+			//			" : " + sFormattedWidestFreq);
 		}
 	}
 	
@@ -217,16 +221,16 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				break;
 			//manual
 			case 1:
-				int configured_color = mContext.getSharedPreferences(PREF_KEY, 0).getInt("configured_color", Color.BLACK);
+				int configured_color = mContext.getSharedPreferences(PREF_KEY, 0).getInt("configured_color", Color.WHITE);
 				setTextColor(configured_color);
 				break;
 			//freq 
 			case 2:
-				int color_low = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_low", Color.BLUE);
-				int color_middle = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_middle", Color.GREEN);
+				int color_low = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_low", Color.GREEN);
+				int color_middle = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_middle", Color.YELLOW);
 				int color_high = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_high", Color.RED);
-				int freq_middle = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_middle", "20"));
-				int freq_high = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_high", "50"));
+				int freq_middle = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_middle", "500"));
+				int freq_high = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_high", "1000"));
 				
 				if(iFreq >= freq_high)
 					setTextColor(color_high);
@@ -245,7 +249,18 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-		if(key.equals("position")) {
+		if(key.equals("update_interval")) {
+			int updateInterval = Integer.parseInt(pref.getString("update_interval", "1000"));
+			cancelAlarm();
+			setAlarm(updateInterval);
+		}
+		
+		else if(key.equals("frequency_file")) {
+			String frequency_file = pref.getString("frequency_file", null);
+			freqFile = Utils.getFreqFile(mContext, frequency_file);
+		}
+
+		else if(key.equals("position")) {
 			int position = Integer.parseInt(pref.getString("position", "0"));
 			if(getParent()!=null)
 				((ViewGroup)getParent()).removeView(this);
@@ -259,19 +274,11 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				mPositionCallback.setAbsoluteLeft();
 			}
 		}
-		
-		else if(key.equals("update_interval")) {
-			int updateInterval = Integer.parseInt(pref.getString("update_interval", "1000"));
-			cancelAlarm();
-			setAlarm(updateInterval);
-		}
-		
-		else if(key.equals("frequency_file")) {
-			String frequency_file = pref.getString("frequency_file", null);
-			freqFile = Utils.getFreqFile(mContext, frequency_file);
-		}
 
-		else if(key.equals("pref_default_measurement") || key.equals("show_unit")) {
+		else if(key.equals("fontsize") || key.equals("measurement") || key.equals("show_unit")) {
+			// set font size
+			setTextSize(TypedValue.COMPLEX_UNIT_SP,
+					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
 			// set fixed width
 			if(sWidestFreq != null) {
 				String sFormattedWidestFreq;
@@ -285,9 +292,9 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				if(pref.getBoolean("show_unit", false)) {
 					sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 				}
-				setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + 6);  // add 6 for padding
-				//Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
-				//			getPaint().measureText(sFormattedWidestFreq));
+				setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
+				//Utils.log("pref setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq) +
+				//		" : " + sFormattedWidestFreq);
 			}
 		}
 

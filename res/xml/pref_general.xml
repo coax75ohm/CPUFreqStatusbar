@@ -31,6 +31,14 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_position" />
     <ListPreference
+        android:defaultValue="@string/pref_default_fontsize"
+        android:entries="@array/pref_fontsize_list_values"
+        android:entryValues="@array/pref_fontsize_list_values"
+        android:key="fontsize"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_fontsize" />
+    <ListPreference
         android:defaultValue="@string/pref_default_measurement"
         android:entries="@array/pref_freq_measurement_list_titles"
         android:entryValues="@array/pref_freq_measurement_list_values"
@@ -56,32 +64,32 @@
     <!-- MANUAL COLOR -->
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         alphaSlider="true"
-        android:defaultValue="@android:color/black"
+        android:defaultValue="@android:color/white"
         android:key="configured_color"
-        android:summary="@string/color1_summary"
+        android:summary="@string/manual_color_summary"
         android:title="@string/pref_title_configured_color" >
     </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
     <!-- COLOR 1-3 -->
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         alphaSlider="true"
-        android:defaultValue="@color/blue"
+        android:defaultValue="@color/green"
         android:key="color_low"
-        android:summary="@string/color1_summary"
+        android:summary="@string/low_color_summary"
         android:title="@string/pref_title_color_low" >
     </net.margaritov.preference.colorpicker.ColorPickerPreference>
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         alphaSlider="true"
-        android:defaultValue="@color/green"
+        android:defaultValue="@color/yellow"
         android:key="color_middle"
-        android:summary="@string/color1_summary"
+        android:summary="@string/middle_color_summary"
         android:title="@string/pref_title_color_middle" >
     </net.margaritov.preference.colorpicker.ColorPickerPreference>
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         alphaSlider="true"
         android:defaultValue="@color/red"
         android:key="color_high"
-        android:summary="@string/color1_summary"
+        android:summary="@string/high_color_summary"
         android:title="@string/pref_title_color_high" >
     </net.margaritov.preference.colorpicker.ColorPickerPreference>
 

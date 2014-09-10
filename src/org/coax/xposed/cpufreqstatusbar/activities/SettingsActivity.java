@@ -8,9 +8,6 @@ import org.coax.xposed.cpufreqstatusbar.Utils;
 import org.coax.xposed.cpufreqstatusbar.widget.CpuFreq;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -19,8 +16,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -74,18 +69,18 @@ public class SettingsActivity extends PreferenceActivity {
 		// Add 'general' preferences.
 		addPreferencesFromResource(R.xml.pref_general);
 
-		
 		bindPreferenceSummaryToValue(findPreference("update_interval"));
-		bindPreferenceSummaryToValue(findPreference("position"));
-		
+
 		ListPreference frequency_file = (ListPreference)findPreference("frequency_file");
 		String[] files = Utils.getFrequencyFiles();
 		frequency_file.setEntries(files);
 		frequency_file.setEntryValues(files);
 		if (frequency_file.getValue() == null) {
-			frequency_file.setValue("AUTO");
+			frequency_file.setValue("Auto");
 		}
-		
+
+		bindPreferenceSummaryToValue(findPreference("fontsize"));
+		bindPreferenceSummaryToValue(findPreference("position"));
 		bindPreferenceSummaryToValue(findPreference("frequency_file"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
 		bindPreferenceSummaryToValue(findPreference("color_mode"));
@@ -132,11 +127,11 @@ public class SettingsActivity extends PreferenceActivity {
 	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
-			String stringValue = value==null?"":value.toString();
+			String stringValue = value==null ? "" : value.toString();
 			PreferenceManager pm = preference.getPreferenceManager();
-			
+
 			// get color_mode
-			String sColorMode="0";
+			String sColorMode = "0";
 			int color_mode = 0;
 			try {
 				if(preference.getKey().equals("color_mode"))
@@ -148,7 +143,7 @@ public class SettingsActivity extends PreferenceActivity {
 			}
 			catch(Exception e){
 			}
-			
+
 			switch(color_mode) {
 			case 1:
 				pm.findPreference("configured_color").setEnabled(true);
@@ -176,7 +171,7 @@ public class SettingsActivity extends PreferenceActivity {
 				pm.findPreference("freq_high").setEnabled(false);
 				break;
 			}
-			
+
 			if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
 				// the preference's 'entries' list.
@@ -184,33 +179,7 @@ public class SettingsActivity extends PreferenceActivity {
 				int index = listPreference.findIndexOfValue(stringValue);
 
 				// Set the summary to reflect the new value.
-				preference
-						.setSummary(index >= 0 ? listPreference.getEntries()[index]
-								: null);
-
-			} else if (preference instanceof RingtonePreference) {
-				// For ringtone preferences, look up the correct display value
-				// using RingtoneManager.
-				if (TextUtils.isEmpty(stringValue)) {
-					// Empty values correspond to 'silent' (no ringtone).
-					// preference.setSummary(R.string.pref_ringtone_silent);
-
-				} else {
-					Ringtone ringtone = RingtoneManager.getRingtone(
-							preference.getContext(), Uri.parse(stringValue));
-
-					if (ringtone == null) {
-						// Clear the summary if there was a lookup error.
-						preference.setSummary(null);
-					} else {
-						// Set the summary to reflect the new ringtone display
-						// name.
-						String name = ringtone
-								.getTitle(preference.getContext());
-						preference.setSummary(name);
-					}
-				}
-
+				preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 			} else if(!(preference instanceof ColorPickerPreference) && !(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
@@ -237,8 +206,8 @@ public class SettingsActivity extends PreferenceActivity {
 		// current value.
 		sBindPreferenceSummaryToValueListener.onPreferenceChange(
 				preference,
-				PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getAll().get(preference.getKey()));
+				PreferenceManager.getDefaultSharedPreferences(preference.getContext())
+					.getAll().get(preference.getKey()));
 	}
 
 	/**
@@ -250,14 +219,8 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.pref_general);
 
-			// Bind the summaries of EditText/List/Dialog/Ringtone preferences
-			// to their values. When their values change, their summaries are
-			// updated to reflect the new value, per the Android Design
-			// guidelines.
-			bindPreferenceSummaryToValue(findPreference("example_text"));
-			bindPreferenceSummaryToValue(findPreference("example_list"));
+			addPreferencesFromResource(R.xml.pref_general);
 		}
 	}
 }

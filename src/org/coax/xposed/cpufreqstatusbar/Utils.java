@@ -34,7 +34,7 @@ public class Utils {
 	}
 
 	public static void log(String s) {
-		XposedBridge.log(s);
+		XposedBridge.log("CPUFreqStatusbar: " + s);
 	}
 	
 	public static String convertStreamToString(InputStream is) throws Exception {
@@ -49,7 +49,7 @@ public class Utils {
 	
 	public static String[] getFrequencyFiles() {
 		ArrayList<String> result = new ArrayList<String>();
-		result.add("AUTO");
+		result.add("Auto");
 		
 		try {
 			InputStream in = Runtime.getRuntime()
@@ -85,7 +85,7 @@ public class Utils {
 				ret = null;
 		}
 		
-		if(ret==null || fileName.equals("AUTO")) {
+		if(ret==null || fileName.equals("Auto")) {
 			for(String freqFileName : freqFiles) {
 				ret = new File(freqFileName);
 				if(!ret.exists() || !ret.canRead()) {
@@ -116,8 +116,6 @@ public class Utils {
 		// size doesn't really matter here, it's the relative width that counts
 		mPaint.setTextSize(16);
 
-		// TODO: find out status bar font
-		
 		file = new File("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies");
 		if(file.exists() && file.canRead()) {
 			// parse scaling_available_frequencies and find widest string 
