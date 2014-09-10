@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
 import de.robv.android.xposed.XposedBridge;
 
 public class Utils {
@@ -124,6 +125,7 @@ public class Utils {
 				mScanner = new Scanner(file);
 				while(mScanner.hasNext()) {
 					freq = mScanner.next();
+					freq = String.valueOf(Long.valueOf(freq)/1000);
 					width = mPaint.measureText(freq);
 					if(width > maxwidth) {
 						widestFreq = freq;
@@ -133,6 +135,7 @@ public class Utils {
 				mScanner.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				Utils.log(Log.getStackTraceString(e));
 			}
 		} else {
 			file = new File("/sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state");
@@ -142,6 +145,7 @@ public class Utils {
 					mScanner = new Scanner(file).useDelimiter("\\s+\\d+\n");
 					while(mScanner.hasNext()) {
 						freq = mScanner.next();
+						freq = String.valueOf(Long.valueOf(freq)/1000);
 						width = mPaint.measureText(freq);
 						if(width > maxwidth) {
 							widestFreq = freq;
@@ -151,6 +155,7 @@ public class Utils {
 					mScanner.close();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
+					Utils.log(Log.getStackTraceString(e));
 				}
 			}
 		}

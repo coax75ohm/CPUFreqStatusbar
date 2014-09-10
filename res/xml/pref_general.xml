@@ -41,7 +41,7 @@
 
     <CheckBoxPreference
         android:key="show_unit"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="@string/pref_title_show_unit" />
 
     <ListPreference

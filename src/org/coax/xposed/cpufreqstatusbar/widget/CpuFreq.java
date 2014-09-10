@@ -53,24 +53,41 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		// init
 		initFreqFile();
 		try {
-			Utils.log("freqFile="+freqFile==null?"null":freqFile.getPath());
+			Utils.log("freqFile=" + freqFile == null ? "null" : freqFile.getPath());
 		} catch (Exception e) {
 			Utils.log(Log.getStackTraceString(e));
 		}
 
 		// style
-		sWidestFreq = Utils.findWidestFreqString();
 		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		setTextColor(context.getResources().getColor(
-				android.R.color.white));
-
-		// REMOVE - for testing only
-		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
-		//setMinimumWidth(100);
-
+		setTextColor(context.getResources().getColor(android.R.color.white));
 		setSingleLine(true);
 		setPadding(3, 0, 3, 0);
 		setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+
+		// REMOVE - for testing only
+		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+
+		// set fixed width
+		sWidestFreq = Utils.findWidestFreqString();
+		if(sWidestFreq != null) {
+			String sFormattedWidestFreq;
+			String measurement = mContext.getSharedPreferences(PREF_KEY, 0).getString("measurement", "M");
+			if(measurement.equals("G")){
+				float fWidestFreq = Float.parseFloat(sWidestFreq)/1000F;
+				sFormattedWidestFreq = String.format("%.2f", fWidestFreq);
+			} else {
+				sFormattedWidestFreq = sWidestFreq;
+			}
+			if(mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", false)) {
+				sFormattedWidestFreq = sFormattedWidestFreq + measurement;
+			}
+			float scaledDensity = mContext.getResources().getDisplayMetrics().scaledDensity;
+			setMinimumWidth((int)(getPaint().measureText(sFormattedWidestFreq)/scaledDensity));
+			Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
+					getPaint().measureText(sFormattedWidestFreq) + " " +
+					scaledDensity);
+		}
 	}
 	
 	private void initFreqFile() {
@@ -178,7 +195,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			}
 
 			// unit label
-			boolean show_unit = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", true);
+			boolean show_unit = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", false);
 			if(show_unit) {
 				sFreq = sFreq + measurement;
 			}
@@ -190,15 +207,15 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			int color_mode = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("color_mode", "0"));
 			TextView mClock = XposedInit.getClock();
 			
-			// set alpha. this prevents wrong initial colors
-			if(mClock!=null) {
+			// set alpha, this prevents wrong initial colors
+			if(mClock != null) {
 				setAlpha(mClock.getAlpha());
 			}
 
 			switch(color_mode) {
 			// auto
 			case 0:
-				if(mClock!=null) {
+				if(mClock != null) {
 					setTextColor(mClock.getCurrentTextColor());
 				}
 				break;
@@ -215,13 +232,12 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				int freq_middle = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_middle", "20"));
 				int freq_high = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("freq_high", "50"));
 				
-				if(iFreq>=freq_high)
+				if(iFreq >= freq_high)
 					setTextColor(color_high);
-				else if(iFreq>=freq_middle)
+				else if(iFreq >= freq_middle)
 					setTextColor(color_middle);
 				else
 					setTextColor(color_low);
-				
 				break;
 			}
 		} catch (Exception e) {
@@ -260,7 +276,25 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		}
 
 		else if(key.equals("pref_default_measurement") || key.equals("show_unit")) {
-			// TODO: calculate and set fixed width
+			// set fixed width
+			if(sWidestFreq != null) {
+				String sFormattedWidestFreq;
+				String measurement = pref.getString("measurement", "M");
+				if(measurement.equals("G")){
+					float fWidestFreq = Float.parseFloat(sWidestFreq)/1000F;
+					sFormattedWidestFreq = String.format("%.2f", fWidestFreq);
+				} else {
+					sFormattedWidestFreq = sWidestFreq;
+				}
+				if(pref.getBoolean("show_unit", false)) {
+					sFormattedWidestFreq = sFormattedWidestFreq + measurement;
+				}
+				float scaledDensity = mContext.getResources().getDisplayMetrics().scaledDensity;
+				setMinimumWidth((int)(getPaint().measureText(sFormattedWidestFreq)/scaledDensity));
+				Utils.log("pref setMinimumWidth: " + sFormattedWidestFreq + " " +
+							getPaint().measureText(sFormattedWidestFreq) + " " +
+							scaledDensity);
+			}
 		}
 
 		updateFrequency();
