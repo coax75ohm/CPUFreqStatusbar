@@ -37,6 +37,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 	private boolean isStatusBarVis = true;
 
 	private String sWidestFreq;
+	private int statusbarHeight = 0;
 	private final static int paddingWidth = 3;
 
 	public CpuFreq(Context context) {
@@ -53,22 +54,16 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		
 		// init
 		initFreqFile();
-		/* try {
-			Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
-		} catch (Exception e) {
-			Utils.log(Log.getStackTraceString(e));
-		} */
+		//Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
 
-		// style
-		setTextSize(TypedValue.COMPLEX_UNIT_SP,
-				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
-		setTextColor(Color.WHITE);
-		setSingleLine(true);
-		setPadding(paddingWidth, 0, paddingWidth, 0);
-		setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
-
-		// REMOVE - for testing only
-		//setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+		// set height
+		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+		if(resourceId > 0)
+			statusbarHeight = getResources().getDimensionPixelSize(resourceId);
+		if(statusbarHeight > 0) {
+			setHeight(statusbarHeight);
+		}
+		//Utils.log("statusbarHeight = " + statusbarHeight);
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -88,6 +83,17 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			//Utils.log("init setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq) +
 			//			" : " + sFormattedWidestFreq);
 		}
+
+		// style
+		setTextSize(TypedValue.COMPLEX_UNIT_SP,
+				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
+		setTextColor(Color.WHITE);
+		setPadding(paddingWidth, 0, paddingWidth, 0);
+		setGravity(Gravity.CENTER | Gravity.RIGHT);
+		//setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+
+		// REMOVE - for testing only
+		//setBackgroundColor(Color.GRAY);
 	}
 	
 	private void initFreqFile() {
