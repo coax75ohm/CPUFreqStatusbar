@@ -59,9 +59,12 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		loggingEnabled = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("enable_logging", false);
 		initFreqFile();
 		if(loggingEnabled)
-			Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
+			Utils.log("freqFile = " + (freqFile == null ? "null" : freqFile.getPath()));
 
 		// set height
+		setLayoutParams(new ViewGroup.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.MATCH_PARENT));
 		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
 		if(resourceId > 0)
 			statusbarHeight = getResources().getDimensionPixelSize(resourceId);
@@ -70,6 +73,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		}
 		if(loggingEnabled)
 			Utils.log("statusbarHeight = " + statusbarHeight);
+
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -93,12 +97,14 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		}
 
 		// style
-		setTextSize(TypedValue.COMPLEX_UNIT_SP,
-				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("font_size", "16")));
 		setTextColor(Color.WHITE);
-		setPadding(paddingWidth, 0, paddingWidth, 0);
-		setGravity(Gravity.CENTER | Gravity.RIGHT);
-		//setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+		setTextSize(TypedValue.COMPLEX_UNIT_SP,
+					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("font_size", "16")));
+		setPadding(paddingWidth,
+					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("top_padding", "2")),
+					paddingWidth,
+					0);
+		setGravity(Gravity.TOP | Gravity.RIGHT);  // gravity goes to TOP for manual top_padding
 
 		// REMOVE - for testing only
 		//setBackgroundColor(Color.GRAY);
@@ -289,10 +295,16 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			}
 		}
 
-		else if(key.equals("font_size") || key.equals("measurement") || key.equals("show_unit")) {
+		else if(key.equals("font_size") || key.equals("top_padding") ||
+				key.equals("measurement") || key.equals("show_unit")) {
 			// set font size
 			setTextSize(TypedValue.COMPLEX_UNIT_SP,
 					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("font_size", "16")));
+			// set padding
+			setPadding(paddingWidth,
+					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("top_padding", "2")),
+					paddingWidth,
+					0);
 			// set fixed width
 			if(sWidestFreq != null) {
 				String sFormattedWidestFreq;
@@ -317,7 +329,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		else if(key.equals("enable_logging")) {
 			loggingEnabled = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("enable_logging", false);
 		}
-		
+
 		updateFrequency();
 	}
 }

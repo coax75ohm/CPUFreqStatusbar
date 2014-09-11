@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="title_activity_settings">CPUFreq in Statusbar</string>
     <string name="pref_title_update_interval">Update Interval (ms)</string>
     <string name="pref_title_frequency_file">Frequency File</string>
     <string name="pref_title_position">Position</string>
     <string name="pref_title_font_size">Font Size</string>
+    <string name="pref_title_top_padding">Top Padding</string>
     <string name="pref_title_measurement">Display as</string>
     <string name="pref_title_show_unit">Show Unit Multiplier</string>
     <string name="pref_title_color_mode">Color Mode</string>
@@ -18,6 +19,7 @@
     <string name="pref_default_update_interval" translatable="false">1000</string>
     <string name="pref_default_position" translatable="false">0</string>
     <string name="pref_default_font_size" translatable="false">16</string>
+    <string name="pref_default_top_padding" translatable="false">2</string>
     <string name="pref_default_measurement" translatable="false">M</string>
 
     <string-array name="pref_position_list_titles">
@@ -48,5 +50,4 @@
         <item>1</item>
         <item>2</item>
     </string-array>
-    
 </resources>

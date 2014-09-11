@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">CPUFreq in Statusbar</string>
     <string name="app_description">Show CPU frequency in the statusbar.</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
-
 </resources>

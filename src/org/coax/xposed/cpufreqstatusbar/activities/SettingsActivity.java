@@ -83,6 +83,7 @@ public class SettingsActivity extends PreferenceActivity {
 		bindPreferenceSummaryToValue(findPreference("measurement"));
 		bindPreferenceSummaryToValue(findPreference("show_unit"));
 		bindPreferenceSummaryToValue(findPreference("font_size"));
+		bindPreferenceSummaryToValue(findPreference("top_padding"));
 		bindPreferenceSummaryToValue(findPreference("color_mode"));
 		bindPreferenceSummaryToValue(findPreference("configured_color"));
 		bindPreferenceSummaryToValue(findPreference("color_low"));
