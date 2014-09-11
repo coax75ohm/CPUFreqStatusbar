@@ -4,10 +4,10 @@
     <string name="pref_title_update_interval">Update Interval (ms)</string>
     <string name="pref_title_frequency_file">Frequency File</string>
     <string name="pref_title_position">Position</string>
-    <string name="pref_title_font_size">Font Size</string>
     <string name="pref_title_top_padding">Top Padding</string>
     <string name="pref_title_measurement">Display as</string>
     <string name="pref_title_show_unit">Show Unit Multiplier</string>
+    <string name="pref_title_font_size">Font Size</string>
     <string name="pref_title_color_mode">Color Mode</string>
     <string name="pref_title_configured_color">Manual Text Color</string>
     <string name="pref_title_color_low">Low Frequency Color</string>
