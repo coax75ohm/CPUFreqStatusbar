@@ -69,8 +69,6 @@ public class SettingsActivity extends PreferenceActivity {
 		// Add 'general' preferences.
 		addPreferencesFromResource(R.xml.pref_general);
 
-		bindPreferenceSummaryToValue(findPreference("update_interval"));
-
 		ListPreference frequency_file = (ListPreference)findPreference("frequency_file");
 		String[] files = Utils.getFrequencyFiles();
 		frequency_file.setEntries(files);
@@ -79,10 +77,12 @@ public class SettingsActivity extends PreferenceActivity {
 			frequency_file.setValue("Auto");
 		}
 
-		bindPreferenceSummaryToValue(findPreference("fontsize"));
-		bindPreferenceSummaryToValue(findPreference("position"));
 		bindPreferenceSummaryToValue(findPreference("frequency_file"));
+		bindPreferenceSummaryToValue(findPreference("update_interval"));
+		bindPreferenceSummaryToValue(findPreference("position"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
+		bindPreferenceSummaryToValue(findPreference("show_unit"));
+		bindPreferenceSummaryToValue(findPreference("font_size"));
 		bindPreferenceSummaryToValue(findPreference("color_mode"));
 		bindPreferenceSummaryToValue(findPreference("configured_color"));
 		bindPreferenceSummaryToValue(findPreference("color_low"));
@@ -90,7 +90,7 @@ public class SettingsActivity extends PreferenceActivity {
 		bindPreferenceSummaryToValue(findPreference("color_high"));
 		bindPreferenceSummaryToValue(findPreference("freq_middle"));
 		bindPreferenceSummaryToValue(findPreference("freq_high"));
-		bindPreferenceSummaryToValue(findPreference("show_unit"));
+		bindPreferenceSummaryToValue(findPreference("enable_logging"));
 	}
 
 	/** {@inheritDoc} */

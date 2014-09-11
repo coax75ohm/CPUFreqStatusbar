@@ -39,6 +39,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 	private String sWidestFreq;
 	private int statusbarHeight = 0;
 	private final static int paddingWidth = 3;
+	
+	private boolean loggingEnabled = false;
 
 	public CpuFreq(Context context) {
 		this(context, null);
@@ -50,11 +52,14 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 
 	public CpuFreq(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		
 		mContext = context;
 		
 		// init
+		loggingEnabled = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("enable_logging", false);
 		initFreqFile();
-		//Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
+		if(loggingEnabled)
+			Utils.log("freqFile = " + freqFile == null ? "null" : freqFile.getPath());
 
 		// set height
 		int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -63,7 +68,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		if(statusbarHeight > 0) {
 			setHeight(statusbarHeight);
 		}
-		//Utils.log("statusbarHeight = " + statusbarHeight);
+		if(loggingEnabled)
+			Utils.log("statusbarHeight = " + statusbarHeight);
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -80,13 +86,15 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 			}
 			setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
-			//Utils.log("init setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq) +
-			//			" : " + sFormattedWidestFreq);
+			if(loggingEnabled) {
+				Utils.log("sFormattedWidestFreq (init) = " + sFormattedWidestFreq);
+				Utils.log("setMinimumWidth (init) = " + getPaint().measureText(sFormattedWidestFreq));
+			}
 		}
 
 		// style
 		setTextSize(TypedValue.COMPLEX_UNIT_SP,
-				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
+				Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("font_size", "16")));
 		setTextColor(Color.WHITE);
 		setPadding(paddingWidth, 0, paddingWidth, 0);
 		setGravity(Gravity.CENTER | Gravity.RIGHT);
@@ -281,10 +289,10 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			}
 		}
 
-		else if(key.equals("fontsize") || key.equals("measurement") || key.equals("show_unit")) {
+		else if(key.equals("font_size") || key.equals("measurement") || key.equals("show_unit")) {
 			// set font size
 			setTextSize(TypedValue.COMPLEX_UNIT_SP,
-					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("fontsize", "16")));
+					Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("font_size", "16")));
 			// set fixed width
 			if(sWidestFreq != null) {
 				String sFormattedWidestFreq;
@@ -299,8 +307,10 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 					sFormattedWidestFreq = sFormattedWidestFreq + measurement;
 				}
 				setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
-				//Utils.log("pref setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq) +
-				//		" : " + sFormattedWidestFreq);
+				if(loggingEnabled) {
+					Utils.log("sFormattedWidestFreq (pref) = " + sFormattedWidestFreq);
+					Utils.log("setMinimumWidth (pref) = " + getPaint().measureText(sFormattedWidestFreq));
+				}
 			}
 		}
 

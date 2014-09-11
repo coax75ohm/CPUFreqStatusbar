@@ -4,7 +4,7 @@
     <string name="pref_title_update_interval">Update Interval (ms)</string>
     <string name="pref_title_frequency_file">Frequency File</string>
     <string name="pref_title_position">Position</string>
-    <string name="pref_title_fontsize">Font Size</string>
+    <string name="pref_title_font_size">Font Size</string>
     <string name="pref_title_measurement">Display as</string>
     <string name="pref_title_show_unit">Show Unit Multiplier</string>
     <string name="pref_title_color_mode">Color Mode</string>
@@ -14,9 +14,10 @@
     <string name="pref_title_color_high">High Frequency Color</string>
     <string name="pref_title_freq_middle">Middle Frequency (MHz)</string>
     <string name="pref_title_freq_high">High Frequency (MHz)</string>
+    <string name="pref_title_enable_logging">Enable Logging</string>
     <string name="pref_default_update_interval" translatable="false">1000</string>
     <string name="pref_default_position" translatable="false">0</string>
-    <string name="pref_default_fontsize" translatable="false">16</string>
+    <string name="pref_default_font_size" translatable="false">16</string>
     <string name="pref_default_measurement" translatable="false">M</string>
 
     <string-array name="pref_position_list_titles">
@@ -28,14 +29,6 @@
         <item>2</item>
         <item>0</item>
         <item>1</item>
-    </string-array>
-    <string-array name="pref_fontsize_list_values" translatable="false">
-        <item>10</item>
-        <item>12</item>
-        <item>14</item>
-        <item>16</item>
-        <item>18</item>
-        <item>20</item>
     </string-array>
     <string-array name="pref_freq_measurement_list_titles" translatable="false">
         <item>MHz</item>
