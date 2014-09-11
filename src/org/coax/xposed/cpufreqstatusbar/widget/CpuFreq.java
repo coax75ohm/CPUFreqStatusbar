@@ -314,6 +314,10 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			}
 		}
 
+		else if(key.equals("enable_logging")) {
+			loggingEnabled = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("enable_logging", false);
+		}
+		
 		updateFrequency();
 	}
 }

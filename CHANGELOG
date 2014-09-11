@@ -7,5 +7,5 @@ Version 1.1 - Sep 10, 2014
     * doesn't run update when status bar is hidden (requested by aness zurba)
     * removed theme override
     * TODO: add custom icon
-    * add logging option
+    * added logging option
     * misc small tweaks and clean up
