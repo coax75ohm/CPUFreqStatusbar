@@ -31,6 +31,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 			}
 		}
 
+		Utils.log("init could not find clock object");
 		return null;
 	}
 	

@@ -97,7 +97,7 @@ public class Utils {
 		}
 		
 		if(ret==null) {
-			Utils.log("Couldn't find any freq files!");
+			Utils.log("init could not find any frequency files");
 		}
 		
 		return ret;

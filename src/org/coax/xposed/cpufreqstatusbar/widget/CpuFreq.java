@@ -57,9 +57,10 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 		
 		// init
 		loggingEnabled = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("enable_logging", false);
-		initFreqFile();
+
+		freqFile = Utils.getFreqFile(mContext, mContext.getSharedPreferences(PREF_KEY, 0).getString("frequency_file", null));
 		if(loggingEnabled)
-			Utils.log("freqFile = " + (freqFile == null ? "null" : freqFile.getPath()));
+			Utils.log("init freqFile = " + (freqFile == null ? "null" : freqFile.getPath()));
 
 		// set height
 		setLayoutParams(new ViewGroup.LayoutParams(
@@ -72,8 +73,7 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			setHeight(statusbarHeight);
 		}
 		if(loggingEnabled)
-			Utils.log("statusbarHeight = " + statusbarHeight);
-
+			Utils.log("init statusbarHeight = " + statusbarHeight);
 
 		// set fixed width
 		sWidestFreq = Utils.findWidestFreqString();
@@ -91,9 +91,11 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			}
 			setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
 			if(loggingEnabled) {
-				Utils.log("sFormattedWidestFreq (init) = " + sFormattedWidestFreq);
-				Utils.log("setMinimumWidth (init) = " + getPaint().measureText(sFormattedWidestFreq));
+				Utils.log("init sFormattedWidestFreq = " + sFormattedWidestFreq);
+				Utils.log("init setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq));
 			}
+		} else if(loggingEnabled) {
+			Utils.log("init could not set width");
 		}
 
 		// style
@@ -105,16 +107,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 					paddingWidth,
 					0);
 		setGravity(Gravity.TOP | Gravity.RIGHT);  // gravity goes to TOP for manual top_padding
-
-		// REMOVE - for testing only
-		//setBackgroundColor(Color.GRAY);
 	}
 	
-	private void initFreqFile() {
-		String frequency_file = mContext.getSharedPreferences(PREF_KEY, 0).getString("frequency_file", null);
-		freqFile = Utils.getFreqFile(mContext, frequency_file);
-	}
-
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
@@ -284,13 +278,13 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 			int position = Integer.parseInt(pref.getString("position", "0"));
 			if(getParent()!=null)
 				((ViewGroup)getParent()).removeView(this);
-			if(position==0) {
+			if(position == 0) {
 				mPositionCallback.setLeft();
 			}
-			else if(position==1) {
+			else if(position == 1) {
 				mPositionCallback.setRight();
 			}
-			else if(position==2) {
+			else if(position == 2) {
 				mPositionCallback.setAbsoluteLeft();
 			}
 		}
@@ -320,8 +314,8 @@ public class CpuFreq extends TextView implements OnSharedPreferenceChangeListene
 				}
 				setMinimumWidth((int)getPaint().measureText(sFormattedWidestFreq) + paddingWidth * 2);
 				if(loggingEnabled) {
-					Utils.log("sFormattedWidestFreq (pref) = " + sFormattedWidestFreq);
-					Utils.log("setMinimumWidth (pref) = " + getPaint().measureText(sFormattedWidestFreq));
+					Utils.log("pref sFormattedWidestFreq = " + sFormattedWidestFreq);
+					Utils.log("pref setMinimumWidth = " + getPaint().measureText(sFormattedWidestFreq));
 				}
 			}
 		}

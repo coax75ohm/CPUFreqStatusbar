@@ -6,6 +6,6 @@ Version 1.1 - Sep 10, 2014
       with scaling_available_frequencies or stats/time_in_state
     * doesn't run update when status bar is hidden (requested by aness zurba)
     * removed theme override
-    * TODO: add custom icon
+    * added custom icon
     * added logging option
     * misc small tweaks and clean up
